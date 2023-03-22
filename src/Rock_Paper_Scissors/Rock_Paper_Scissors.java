@@ -1,62 +1,24 @@
 package Rock_Paper_Scissors;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Rock_Paper_Scissors {
 
-    public static int getScore(char enemy, char you){
-        int score = 0;
+    //plays a game of rock paper scissors and returns the result based on the inputs given
+    public static Situation playGame(Move opponent, Move you){
+        Situation situation = null;
 
-        //switch-case for every possible combination (please tell me if theres a better way to do this haha)
-        switch (enemy) {
-            case 'A':
-                switch (you) {
-                    case 'X':
-                        score = 4;
-                        break;
-                    case 'Y':
-                        score = 8;
-                        break;
-                    case 'Z':
-                        score = 3;
-                        break;
-                }
-                break;
-            case 'B':
-                switch (you){
-                    case 'X':
-                        score = 1;
-                        break;
-                    case 'Y':
-                        score = 5;
-                        break;
-                    case 'Z':
-                        score = 9;
-                        break;
-                }
-                break;
+        if ((you == Move.Rock && opponent == Move.Scissors) || (you == Move.Paper && opponent == Move.Rock) || (you == Move.Scissors && opponent == Move.Paper)){
+            situation = Situation.Win;
+        } else if (you == opponent) {
+            situation = Situation.Draw;
+        }else
+            situation = Situation.Loss;
 
-            case 'C':
-                switch (you){
-                    case 'X':
-                        score = 7;
-                        break;
-                    case 'Y':
-                        score = 2;
-                        break;
-                    case 'Z':
-                        score = 6;
-                        break;
-
-                }
-                break;
-        }
-
-        return score;
+        return situation;
     }
 
     public static void main(String[] args) throws IOException {
@@ -65,28 +27,20 @@ public class Rock_Paper_Scissors {
 
         BufferedReader reader = new BufferedReader(new FileReader("src/Rock_Paper_Scissors/input.txt"));
 
-        //creates a new list where all values are saved for easy reading
+        //Goes through each line of the input and calculates the score for all of them
         while (true){
             String currentLine = reader.readLine();
 
             if (currentLine == null){
                 break;
             }
-            guideList.add(currentLine);
 
-        }
+            Move enemyMove = Move.typeOfMove(currentLine.charAt(0));
+            Move yourMove = Move.typeOfMove(currentLine.charAt(2));
 
-        char[][] strategyGuide = new char[guideList.size()][2];
+            //the score is the "value" of your move + the value of the result of the game
+            score += (yourMove.getMoveValue() + playGame(enemyMove, yourMove).getSituationScore());
 
-        //sets the values of the multidimensional array
-        for (int counter = 0; counter < guideList.size(); counter++){
-            strategyGuide[counter][0] = guideList.get(counter).charAt(0);
-            strategyGuide[counter][1] = guideList.get(counter).charAt(2);
-        }
-
-        //compares every single element of the list
-        for (char[] element : strategyGuide) {
-            score += getScore(element[0], element[1]);
         }
 
         System.out.println(score);
